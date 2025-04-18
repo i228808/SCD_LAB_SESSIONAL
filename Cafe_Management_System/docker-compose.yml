@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - mern-net
+
+  customer:
+    build: ./customer-services
+    container_name: customer-services
+    ports:
+      - "${CustomerServicePort}:${CustomerServicePort}"
+    depends_on:
+      - mongo
+    environment:
+      - dbURL=${dbURL}
+    networks:
+      - mern-net
+  order:
+    build: ./order-services
+    container_name: order-services
+    ports:
+      - "${OrderServicePort}:${OrderServicePort}"
+    depends_on:
+      - mongo
+    environment:
+      - dbURL=${dbURL}
+    networks:
+      - mern-net
+  inventory:
+    build: ./inventory-services
+    container_name: inventory-services
+    ports:
+      - "${InventoryServicePort}:${InventoryServicePort}"
+    depends_on:
+      - mongo
+    environment:
+      - dbURL=${dbURL}
+    networks:
+      - mern-net
+  menu:
+    build: ./menu-services
+    container_name: menu-services
+    ports:
+      - "${MenuServicePort}:${MenuServicePort}"
+    depends_on:
+      - mongo
+    environment:
+      - dbURL=${dbURL}
+    networks:
+      - mern-net
+  payment:
+    build: ./payment-services
+    container_name: payment-services
+    ports:
+      - "${PaymentServicePort}:${PaymentServicePort}"
+    depends_on:
+      - mongo
+    environment:
+      - dbURL=${dbURL}
+    networks:
+      - mern-net
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "${APIGateWayPort}:${APIGateWayPort}"
+    networks:
+      - mern-net
+volumes:
+  mongo_data:
+
+networks:
+  mern-net:
